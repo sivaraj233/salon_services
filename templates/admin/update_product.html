@@ -1,0 +1,40 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Update Product{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Update Product</h2>
+    <div class="card shadow p-4 bg-light">
+        <form action="{{ url_for('update_product', product_id=product.product_id) }}" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Product Code</label>
+                <input type="text" name="product_code" class="form-control" value="{{ product.product_code }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Product Name</label>
+                <input type="text" name="name" class="form-control" value="{{ product.name }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Price (₹)</label>
+                <input type="number" name="price" class="form-control" step="0.01" value="{{ product.price }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3">{{ product.description }}</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Current Image</label><br>
+                <img src="{{ url_for('static', filename='img/' + product.image) }}" alt="{{ product.name }}" width="100" height="100" class="rounded mb-2">
+                <input type="file" name="image" class="form-control" accept=".jpg, .jpeg, .png, .gif">
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Update Product</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

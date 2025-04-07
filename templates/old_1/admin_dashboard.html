@@ -1,0 +1,388 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .appointment-card {
+        border-left: 4px solid transparent;
+    }
+    .appointment-card.pending {
+        border-left-color: #ffc107;
+    }
+    .appointment-card.confirmed {
+        border-left-color: #198754;
+    }
+    .appointment-card.completed {
+        border-left-color: #0dcaf0;
+    }
+    .appointment-card.cancelled {
+        border-left-color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/appointments">
+                            <i class="fas fa-calendar-check me-2"></i> Appointments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/customers">
+                            <i class="fas fa-users me-2"></i> Customers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/products">
+                            <i class="fas fa-box-open me-2"></i> Inventory
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/reports">
+                            <i class="fas fa-chart-line me-2"></i> Reports
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard Overview</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Today</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Week</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">Month</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Today's Appointments</h6>
+                                    <h2 id="todayAppointments">0</h2>
+                                </div>
+                                <i class="fas fa-calendar-day fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Total Revenue</h6>
+                                    <h2 id="totalRevenue">$0</h2>
+                                </div>
+                                <i class="fas fa-dollar-sign fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card bg-warning text-dark">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Pending Appointments</h6>
+                                    <h2 id="pendingAppointments">0</h2>
+                                </div>
+                                <i class="fas fa-clock fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stat-card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Low Stock Items</h6>
+                                    <h2 id="lowStockItems">0</h2>
+                                </div>
+                                <i class="fas fa-exclamation-triangle fa-3x opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Appointments -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Recent Appointments</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer</th>
+                                    <th>Service</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentAppointments">
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-end">
+                        <a href="/admin/appointments" class="btn btn-primary">View All Appointments</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="/admin/appointments/new" class="btn btn-outline-primary text-start">
+                                    <i class="fas fa-plus-circle me-2"></i> Add New Appointment
+                                </a>
+                                <a href="/admin/products/new" class="btn btn-outline-primary text-start">
+                                    <i class="fas fa-box me-2"></i> Add New Product
+                                </a>
+                                <a href="/admin/reports/sales" class="btn btn-outline-primary text-start">
+                                    <i class="fas fa-file-invoice-dollar me-2"></i> Generate Sales Report
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">Recent Sales</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group" id="recentSales">
+                                <li class="list-group-item text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load dashboard stats
+    fetchDashboardStats();
+    
+    // Load recent appointments
+    fetchRecentAppointments();
+    
+    // Load recent sales
+    fetchRecentSales();
+});
+
+function fetchDashboardStats() {
+    fetch('/api/admin/stats')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('todayAppointments').textContent = data.today_appointments || 0;
+            document.getElementById('totalRevenue').textContent = `$${data.total_revenue?.toFixed(2) || '0.00'}`;
+            document.getElementById('pendingAppointments').textContent = data.pending_appointments || 0;
+            document.getElementById('lowStockItems').textContent = data.low_stock_items || 0;
+        })
+        .catch(error => {
+            console.error('Error fetching dashboard stats:', error);
+        });
+}
+
+function fetchRecentAppointments() {
+    fetch('/api/admin/recent-appointments')
+        .then(response => response.json())
+        .then(appointments => {
+            const container = document.getElementById('recentAppointments');
+            container.innerHTML = '';
+            
+            if (appointments.length === 0) {
+                container.innerHTML = '<tr><td colspan="6" class="text-center">No recent appointments</td></tr>';
+                return;
+            }
+            
+            appointments.forEach(appt => {
+                const row = document.createElement('tr');
+                row.className = `appointment-card ${appt.status}`;
+                
+                // Format date and time
+                const date = new Date(`${appt.appointment_date}T${appt.start_time}`);
+                const formattedDate = date.toLocaleDateString();
+                const formattedTime = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                row.innerHTML = `
+                    <td>${appt.appointment_id}</td>
+                    <td>${appt.client_name}</td>
+                    <td>${appt.service_name}</td>
+                    <td>${formattedDate} at ${formattedTime}</td>
+                    <td>
+                        <span class="badge bg-${getStatusBadgeColor(appt.status)}">
+                            ${appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary" onclick="viewAppointment(${appt.appointment_id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-success" onclick="confirmAppointment(${appt.appointment_id})">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                container.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching recent appointments:', error);
+            document.getElementById('recentAppointments').innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-danger">
+                        Error loading appointments
+                    </td>
+                </tr>
+            `;
+        });
+}
+
+function fetchRecentSales() {
+    fetch('/api/admin/recent-sales')
+        .then(response => response.json())
+        .then(sales => {
+            const container = document.getElementById('recentSales');
+            container.innerHTML = '';
+            
+            if (sales.length === 0) {
+                container.innerHTML = '<li class="list-group-item text-center">No recent sales</li>';
+                return;
+            }
+            
+            sales.forEach(sale => {
+                const item = document.createElement('li');
+                item.className = 'list-group-item d-flex justify-content-between align-items-center';
+                item.innerHTML = `
+                    <div>
+                        <h6 class="mb-1">${sale.product_name}</h6>
+                        <small class="text-muted">${new Date(sale.sale_date).toLocaleString()}</small>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">$${sale.total_price.toFixed(2)}</span>
+                `;
+                container.appendChild(item);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching recent sales:', error);
+            document.getElementById('recentSales').innerHTML = `
+                <li class="list-group-item text-center text-danger">
+                    Error loading sales
+                </li>
+            `;
+        });
+}
+
+function getStatusBadgeColor(status) {
+    switch(status) {
+        case 'pending': return 'warning';
+        case 'confirmed': return 'success';
+        case 'completed': return 'info';
+        case 'cancelled': return 'danger';
+        default: return 'secondary';
+    }
+}
+
+function viewAppointment(appointmentId) {
+    window.location.href = `/admin/appointments/${appointmentId}`;
+}
+
+function confirmAppointment(appointmentId) {
+    fetch(`/api/admin/appointments/${appointmentId}/confirm`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('success', 'Appointment confirmed successfully');
+            fetchRecentAppointments();
+            fetchDashboardStats();
+        } else {
+            showAlert('danger', data.message || 'Error confirming appointment');
+        }
+    })
+    .catch(error => {
+        console.error('Error confirming appointment:', error);
+        showAlert('danger', 'An error occurred while confirming the appointment');
+    });
+}
+
+function showAlert(type, message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show mb-3`;
+    alertDiv.role = 'alert';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const mainContainer = document.querySelector('main.container');
+    mainContainer.insertBefore(alertDiv, mainContainer.firstChild);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        alertDiv.classList.remove('show');
+        setTimeout(() => alertDiv.remove(), 150);
+    }, 5000);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Confirm List{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Confirm List</h1>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Customer Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Service</th>
+                <th>Staff Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ loop.index }}</td>  
+                <td>{{ appointment.customer_name }}</td>
+                <td>{{ appointment.appointment_date }}</td>
+                <td>{{ appointment.appointment_time }}</td>
+                <td>{{ appointment.service }}</td>
+                <td>{{ appointment.staff_name if appointment.staff_name else 'N/A' }}</td>
+                <td>
+                    <span class="badge 
+                        {% if appointment.status == 'Pending' %} bg-warning 
+                        {% elif appointment.status == 'Confirmed' %} bg-primary 
+                        {% elif appointment.status == 'Completed' %} bg-success 
+                        {% elif appointment.status == 'Cancelled' %} bg-danger 
+                        {% else %} bg-secondary {% endif %}">
+                        {{ appointment.status }}
+                    </span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No confirmed appointments found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

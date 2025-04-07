@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Salon Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero-section text-center py-5 bg-light rounded-3 mb-5">
+        <h1 class="display-4">Welcome to Our Beauty Salon</h1>
+        <p class="lead">Book appointments, manage services, and purchase products</p>
+        <div class="mt-4">
+            {% if 'user_id' not in session %}
+                <a href="{{ url_for('login_page') }}" class="btn btn-primary btn-lg mx-2">
+                    <i class="fas fa-sign-in-alt me-1"></i> Login
+                </a>
+                <a href="{{ url_for('register_page') }}" class="btn btn-outline-primary btn-lg mx-2">
+                    <i class="fas fa-user-plus me-1"></i> Register
+                </a>
+            {% else %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg mx-2">
+                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
+                {% if session['role'] == 'admin' %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary btn-lg mx-2">
+                        <i class="fas fa-cog me-1"></i> Admin Panel
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-3x mb-3 text-primary"></i>
+                    <h3>Easy Booking</h3>
+                    <p>Schedule your appointments online anytime, anywhere with our simple booking system.</p>
+                    {% if 'user_id' in session %}
+                        <a href="{{ url_for('booking_page') }}" class="btn btn-outline-primary">
+                            Book Now
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-cut fa-3x mb-3 text-primary"></i>
+                    <h3>Our Services</h3>
+                    <p>Discover our wide range of beauty and wellness services tailored to your needs.</p>
+                    <a href="/services" class="btn btn-outline-primary">
+                        View Services
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-bag fa-3x mb-3 text-primary"></i>
+                    <h3>Premium Products</h3>
+                    <p>Purchase high-quality beauty products used by our professionals.</p>
+                    <a href="/products" class="btn btn-outline-primary">
+                        Shop Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="testimonials-section mt-5 py-4 bg-light rounded-3">
+        <h2 class="text-center mb-4">What Our Clients Say</h2>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text">"The best salon experience I've ever had! The online booking system is so convenient."</p>
+                        <footer class="blockquote-footer">Sarah Johnson</footer>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="card-text">"Love how easy it is to manage my appointments and purchase products."</p>
+                        <footer class="blockquote-footer">Michael Chen</footer>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3 text-warning">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="card-text">"The staff is amazing and the online system makes everything so simple."</p>
+                        <footer class="blockquote-footer">Emma Williams</footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

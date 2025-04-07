@@ -1,0 +1,46 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+salon_env/
+.env
+.env.local
+
+# Flask cache and session data
+instance/
+*.log
+*.sqlite3
+*.db
+
+# Python package files
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDE and editor files
+.vscode/
+*.swp
+*.swo
+*.swn
+*.idea/
+*.iml
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# macOS and Linux system files
+.DS_Store
+*.bak
+Thumbs.db
+
+# Pytest and coverage reports
+htmlcov/
+.coverage
+.pytest_cache/
+
+# Compiled C extensions
+*.so
+
+# Docker
+docker-compose.override.yml

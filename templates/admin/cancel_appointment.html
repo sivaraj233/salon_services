@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Cancelled Appointments{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Cancelled Appointments</h1>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>S.No</th>
+                <th>Customer Name</th>
+                <th>Phone</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Service</th>
+                <th>Staff Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ loop.index }}</td>  <!-- Serial Number -->
+                <td>{{ appointment.customer_name }}</td>
+                <td>{{ appointment.phone }}</td>
+                <td>{{ appointment.appointment_date }}</td>
+                <td>{{ appointment.appointment_time }}</td>
+                <td>{{ appointment.service }}</td>
+                <td>{{ appointment.staff_name if appointment.staff_name else 'N/A' }}</td>
+                <td>
+                    <span class="badge bg-danger">{{ appointment.status }}</span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8" class="text-center">No canceled appointments found for today.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

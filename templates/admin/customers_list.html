@@ -1,0 +1,28 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Confirm List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Customer List</h2>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>SNO</th>
+                <th>Name</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ loop.index }}</td>
+
+                <td>{{ customer.customer_name }}</td>
+                <td>{{ customer.phone }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

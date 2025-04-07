@@ -1,0 +1,68 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Add Appointment{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+    <h1 class="mb-4">Add New Appointment</h1>
+
+    <form method="POST" action="{{ url_for('add_appointment') }}">
+        <div class="mb-3">
+            <label for="customer_name" class="form-label">Customer Name</label>
+            <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input type="text" class="form-control" id="phone" name="phone" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="service_id" class="form-label">Select Service</label>
+            <select class="form-control" id="service_id" name="service_id" required>
+                <option value="">Select Service</option>
+                {% for service in service_list %}
+                    <option value="{{ service.service_id }}">{{ service.service_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="appointment_date" class="form-label">Appointment Date</label>
+            <input type="date" class="form-control" id="appointment_date" name="appointment_date" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="appointment_time" class="form-label">Appointment Time</label>
+            <select class="form-control" id="appointment_time" name="appointment_time" required>
+                <option value="">Select Time</option>
+                {% for hour in range(10, 19) %}  <!-- 10 AM to 6 PM -->
+                    <option value="{{ hour }}:00">{{ hour }}:00</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="staff_id" class="form-label">Assign Staff</label>
+            <select class="form-control" id="staff_id" name="staff_id" required>
+                <option value="">Select Staff</option>
+                {% for staff in staff_list %}
+                    <option value="{{ staff.staff_id }}">{{ staff.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Appointment</button>
+        <a href="{{ url_for('manage_appointment') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

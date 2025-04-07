@@ -1,0 +1,99 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Available Slots{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Appointments</h2>
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Staff</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments %}
+                <tr>
+                    <td>{{ appt.appointment_id }}</td>
+                    <td>{{ appt.customer_name }}</td>
+                    <td>{{ appt.phone }}</td>
+                    <td>{{ appt.service }}</td>
+                    <td>{{ appt.appointment_date }}</td>
+                    <td>{{ appt.appointment_time }}</td>
+                    <td>{{ appt.name or 'Unassigned' }}</td>
+                    <td>
+                        {% if appt.status == "Pending" %}
+                            <span class="badge bg-warning">Pending</span>
+                        {% elif appt.status == "Confirmed" %}
+                            <span class="badge bg-success">Confirmed</span>
+                        {% else %}
+                            <span class="badge bg-danger">Canceled</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if appt.status == "Pending" %}
+                            <button class="btn btn-success btn-sm confirm-btn" data-id="{{ appt.appointment_id }}">Confirm</button>
+                            <button class="btn btn-danger btn-sm cancel-btn" data-id="{{ appt.appointment_id }}">Cancel</button>
+                        {% else %}
+                            <button class="btn btn-secondary btn-sm" disabled>No Actions</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center">No appointments found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ✅ Move the script to the end of the body -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+$(document).ready(function(){
+    // ✅ Confirm Appointment
+    $(".confirm-btn").click(function(){
+        let appointmentId = $(this).data("id");
+
+        $.ajax({
+            url: "/confirm-appointment/" + appointmentId,
+            type: "POST",
+            success: function(response) {
+                alert(response.message); // ✅ Show success message
+                location.reload();  // ✅ Refresh the page after confirming
+            },
+            error: function(xhr) {
+                alert("Error: " + xhr.responseJSON.message);
+            }
+        });
+    });
+
+    // ✅ Cancel Appointment
+    $(".cancel-btn").click(function(){
+        let appointmentId = $(this).data("id");
+
+        $.ajax({
+            url: "/cancel-appointment/" + appointmentId,
+            type: "POST",
+            success: function(response) {
+                alert(response.message); // ✅ Show success message
+                location.reload();  // ✅ Refresh the page after canceling
+            },
+            error: function(xhr) {
+                alert("Error: " + xhr.responseJSON.message);
+            }
+        });
+    });
+});
+
+    </script>
+{% endblock %}

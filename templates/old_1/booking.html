@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Book an Appointment</h2>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <form id="bookingForm">
+                        <div class="mb-3">
+                            <label for="service" class="form-label">Service</label>
+                            <select class="form-select" id="service" required>
+                                <option value="">Select a service</option>
+                                <!-- Services will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="appointmentDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="appointmentDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="appointmentTime" class="form-label">Time</label>
+                                <input type="time" class="form-control" id="appointmentTime" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="notes" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Book Appointment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Service Details</h5>
+                    <div id="serviceDetails">
+                        <p class="text-muted">Select a service to view details</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Your Appointments</h5>
+                    <div id="userAppointments">
+                        <p class="text-muted">Loading your appointments...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load services
+    fetch('/api/services')
+        .then(response => response.json())
+        .then(services => {
+            const serviceSelect = document.getElementById('service');
+            services.forEach(service => {
+                const option = document.createElement('option');
+                option.value = service.service_id;
+                option.textContent = `${service.name} - $${service.price}`;
+                serviceSelect.appendChild(option);
+            });
+        });
+    
+    // Load user appointments
+    loadUserAppointments();
+    
+    // Service selection change handler
+    document.getElementById('service').addEventListener('change', function() {
+        const serviceId = this.value;
+        if (!serviceId) {
+            document.getElementById('serviceDetails').innerHTML = '<p class="text-muted">Select a service to view details</p>';
+            return;
+        }
+        
+        fetch(`/api/services/${serviceId}`)
+            .then(response => response.json())
+            .then(service => {
+                document.getElementById('serviceDetails').innerHTML = `
+                    <h6>${service.name}</h6>
+                    <p>$${service.price} | ${service.duration} minutes</p>
+                    <p>${service.description || 'No description available'}</p>
+                `;
+            });
+    });
+    
+    // Booking form submission
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const serviceId = document.getElementById('service').value;
+        const date = document.getElementById('appointmentDate').value;
+        const time = document.getElementById('appointmentTime').value;
+        const notes = document.getElementById('notes').value;
+        
+        fetch('/api/appointments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                service_id: serviceId,
+                appointment_date: date,
+                start_time: time,
+                notes: notes
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                loadUserAppointments();
+                document.getElementById('bookingForm').reset();
+            } else {
+                alert('Error booking appointment');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while booking the appointment');
+        });
+    });
+    
+    function loadUserAppointments() {
+        fetch('/api/appointments')
+            .then(response => response.json())
+            .then(appointments => {
+                const container = document.getElementById('userAppointments');
+                
+                if (appointments.length === 0) {
+                    container.innerHTML = '<p>You have no upcoming appointments</p>';
+                    return;
+                }
+                
+                let html = '<div class="list-group">';
+                appointments.forEach(appt => {
+                    html += `
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${appt.service_name}</h6>
+                                <small class="text-${appt.status === 'confirmed' ? 'success' : 'warning'}">${appt.status}</small>
+                            </div>
+                            <small class="text-muted">${appt.appointment_date} at ${appt.start_time}</small>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                container.innerHTML = html;
+            });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

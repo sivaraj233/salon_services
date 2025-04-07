@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Meromi Beauty Salon{% endblock %}</title>
+    <!-- Bootstrap 5.3 CDN -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/contact.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/MediaQuery.css') }}">
+    <script src="https://kit.fontawesome.com/7a6c6b42a6.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">Meromi Beauty Salon</a>
+        <div class="menuToggle"></div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('services') }}">Services</a></li>
+                <li><a href="{{ url_for('portfolio') }}">Portfolio</a></li>
+                <li><a href="{{ url_for('contact') }}">Contact</a></li>
+                <li><a href="#" id="NavNum">+91 9585402007</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    {% include 'footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
